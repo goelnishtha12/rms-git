@@ -1,0 +1,100 @@
+# Copyright (c) 2020, Oracle and/or its affiliates. All rights reserved.
+# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+title: "Create a VCN in Oracle Cloud Infrastructure including default route table, DHCP options and subnets"
+stackDescription: ${Messages.solutionsHub.solutions.subnets.stackDescription()}
+schemaVersion: 1.1.0
+version: "20200301"
+locale: "en"
+
+variableGroups:
+- title: ${Messages.solutionsHub.generalConfig()}
+  visible: false
+  variables:
+  - compartment_ocid
+  - tenancy_ocid
+  - region
+
+- title: ${Messages.solutionsHub.requiredConfig()}
+  visible: true  
+  variables:
+  - dns_enabled
+  - dns_label
+  - subnet_display_name
+  - vcn_display_name
+  - prohibit_public_ip_on_vnic
+  - availability_domain_name
+
+- title: ${Messages.solutionsHub.optionalConfig()}
+  visible: true  
+  variables:
+  - vcn_cidr
+
+variables:
+
+  compartment_ocid:
+    type: oci:identity:compartment:id
+    # type: string
+    required: true
+    title: ${Messages.solutionsHub.genericVariables.compartment.title()}
+    description: ${Messages.solutionsHub.genericVariables.compartment.description()}
+    
+  region:
+    type: oci:identity:region:name
+    required: true
+    title: ${Messages.solutionsHub.genericVariables.region.title()}
+    description: ${Messages.solutionsHub.genericVariables.region.description()}
+
+  vcn_cidr:
+    type: string
+    required: false
+    default: "192.168.0.0/16"
+    pattern: "^(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9]).(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\/(3[0-2]|[1-2]?[0-9])$"
+    title: ${Messages.solutionsHub.solutions.subnets.variables.vcn_cidr.title()}
+    description: ${Messages.solutionsHub.solutions.subnets.variables.vcn_cidr.description()}
+
+  dns_enabled:
+    type: boolean
+    required: true
+    default: true
+    title: ${Messages.solutionsHub.solutions.subnets.variables.dns_enabled.title()}
+    description: ${Messages.solutionsHub.solutions.subnets.variables.dns_enabled.description()}
+
+  dns_label:
+    type: string
+    required: true
+    visible: ${dns_enabled}
+    default: "defaultDNS1"
+    pattern: "^[a-zA-Z][a-zA-Z0-9]{0,14}$"
+    title: ${Messages.solutionsHub.solutions.subnets.variables.dns_label.title()}
+    description: ${Messages.solutionsHub.solutions.subnets.variables.dns_label.description()}
+
+  subnet_display_name:
+    type: string
+    required: true
+    default: "defaultSubnet1"
+    title: ${Messages.solutionsHub.solutions.subnets.variables.subnet_display_name.title()}
+    description: ${Messages.solutionsHub.solutions.subnets.variables.subnet_display_name.description()}
+
+  vcn_display_name:
+    type: string
+    required: true
+    default: "defaultVCN1"
+    title: ${Messages.solutionsHub.solutions.subnets.variables.vcn_display_name.title()}
+    description: ${Messages.solutionsHub.solutions.subnets.variables.vcn_display_name.description()}
+
+  prohibit_public_ip_on_vnic:
+    type: boolean
+    required: true
+    default: true
+    title: ${Messages.solutionsHub.solutions.subnets.variables.prohibit_public_ip_on_vnic.title()}
+    description: ${Messages.solutionsHub.solutions.subnets.variables.prohibit_public_ip_on_vnic.description()}
+
+  availability_domain_name:
+    type: oci:identity:availabilitydomain:name
+    dependsOn:
+      compartmentId: ${compartment_ocid}
+    required: true
+    title: ${Messages.solutionsHub.genericVariables.availability_domain_name.title()}
+    description: ${Messages.solutionsHub.genericVariables.availability_domain_name.description()}
+    default: "tabw:PHX-AD-2"
